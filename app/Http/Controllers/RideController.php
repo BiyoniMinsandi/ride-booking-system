@@ -11,12 +11,17 @@ class RideController extends Controller
 {
     public function index()
     {
-        $vehicles = Vehicle::all();
-        $rides = Ride::where('user_id', Auth::id())->get();
-        return view('rides.index', compact('rides', 'vehicles'));
+        $rides = Ride::where('user_id', Auth::id())->paginate(10); // Paginate the rides
+        return view('rides.index', compact('rides'));
     }
 
-    /*public function store(Request $request)
+    public function create()
+    {
+        $vehicles = Vehicle::all();
+        return view('rides.create', compact('vehicles'));
+    }
+
+    public function store(Request $request)
     {
         $request->validate([
             'pickup_location' => 'required|string|max:255',
@@ -30,23 +35,41 @@ class RideController extends Controller
             'dropoff_location' => $request->dropoff_location,
             'vehicle_id' => $request->vehicle_id,
             'status' => 'pending',
-        ]);*/
-        public function store(Request $request)
-{
-    // Validate and create the ride
-    $request->validate([
-        'ride_name' => 'required|string|max:255',
-        // Add other validation rules as needed
-    ]);
+        ]);
 
-    $ride = Ride::create([
-        'name' => $request->ride_name,
-        // Add other fields to be saved
-    ]);
-
-    return redirect()->route('rides.index');  // Redirect to the ride index page after creating
-}
-
-
-        //return redirect()->route('rides.index')->with('success', 'Ride booked successfully.');
+        return redirect()->route('rides.index')->with('status', 'Ride created successfully!');
     }
+
+    public function edit($id)
+    {
+        $ride = Ride::findOrFail($id);
+        $vehicles = Vehicle::all();
+        return view('rides.edit', compact('ride', 'vehicles'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'pickup_location' => 'required|string|max:255',
+            'dropoff_location' => 'required|string|max:255',
+            'vehicle_id' => 'nullable|exists:vehicles,id',
+        ]);
+
+        $ride = Ride::findOrFail($id);
+        $ride->update([
+            'pickup_location' => $request->pickup_location,
+            'dropoff_location' => $request->dropoff_location,
+            'vehicle_id' => $request->vehicle_id,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('rides.index')->with('status', 'Ride updated successfully!');
+    }
+
+    public function destroy($id)
+    {
+        $ride = Ride::findOrFail($id);
+        $ride->delete();
+        return redirect()->route('rides.index')->with('status', 'Ride deleted successfully!');
+    }
+}

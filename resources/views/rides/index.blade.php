@@ -1,56 +1,96 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Your Rides</h1>
-    <a href="#" data-bs-toggle="modal" data-bs-target="#bookRideModal" class="btn btn-primary mb-3">Book a Ride</a>
-    
-    <!-- Displaying the list of rides -->
-    @if($rides->isEmpty())
-        <p>No rides available.</p>
-    @else
-        @foreach ($rides as $ride)
-            <div>
-                <p>{{ $ride->pickup_location }} to {{ $ride->dropoff_location }} ({{ $ride->status }})</p>
-            </div>
-        @endforeach
-    @endif
-</div>
+    <style>
+        
+        .btn-purple {
+            background-color: #6f42c1;  
+            color: white;
+        }
+        .btn-purple:hover {
+            background-color: #5a2e8d; 
+            color: white;
+        }
 
-<!-- Modal for Booking a Ride -->
-<div class="modal fade" id="bookRideModal" tabindex="-1" aria-labelledby="bookRideModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form method="POST" action="{{ route('rides.store') }}">
-        @csrf
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="bookRideModalLabel">Book a Ride</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="pickup_location" class="form-label">Pickup Location</label>
-                    <input type="text" class="form-control" id="pickup_location" name="pickup_location" required>
-                </div>
-                <div class="mb-3">
-                    <label for="dropoff_location" class="form-label">Dropoff Location</label>
-                    <input type="text" class="form-control" id="dropoff_location" name="dropoff_location" required>
-                </div>
-                <div class="mb-3">
-                    <label for="vehicle_id" class="form-label">Select Vehicle</label>
-                    <select class="form-control" id="vehicle_id" name="vehicle_id">
-                        <option value="">No Vehicle</option>
-                        @foreach ($vehicles as $vehicle)
-                            <option value="{{ $vehicle->id }}">{{ $vehicle->license_plate }} - {{ $vehicle->type }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Book Ride</button>
-            </div>
+        
+        .thead-custom {
+            background-color: #6f42c1;  
+            color: white;
+        }
+
+        /* Ensuring the Edit and Delete buttons have the same size */
+        .btn-actions {
+            min-width: 90px;  
+        }
+
+        /* Table row hover effect */
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;  
+        }
+
+        /* Style for the "Rides" heading */
+        .header-title {
+            font-weight: bold; 
+            font-size: 36px; 
+            color: #6f42c1; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+        }
+    </style>
+
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="header-title">Rides</h1>
+            <a href="{{ route('rides.create') }}" class="btn btn-purple">Create New Ride</a>
         </div>
-    </form>
-  </div>
-</div>
+        
+        @if($rides->isEmpty())
+            <div class="alert alert-info" role="alert">
+                No rides available. Please create a new ride.
+            </div>
+        @else
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead class="thead-custom">
+                        <tr>
+                            <th>ID</th>
+                            <th>Pickup Location</th>
+                            <th>Dropoff Location</th>
+                            <th>Status</th>
+                            <th>Vehicle</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($rides as $ride)
+                            <tr>
+                                <td>{{ $ride->id }}</td>
+                                <td>{{ $ride->pickup_location }}</td>
+                                <td>{{ $ride->dropoff_location }}</td>
+                                <td>
+                                    <span class="badge 
+                                        @if($ride->status == 'Pending') badge-warning 
+                                        @elseif($ride->status == 'In Progress') badge-info 
+                                        @elseif($ride->status == 'Completed') badge-success 
+                                        @endif">
+                                        {{ $ride->status }}
+                                    </span>
+                                </td>
+                                <td>{{ $ride->vehicle ? $ride->vehicle->type : 'N/A' }}</td>
+                                <td>
+                                    <a href="{{ route('rides.edit', $ride->id) }}" class="btn btn-warning btn-sm btn-actions">Edit</a>
+                                    <form action="{{ route('rides.destroy', $ride->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm btn-actions" onclick="return confirm('Are you sure you want to delete this ride?')">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                {{ $rides->links() }} <!-- Display pagination links -->
+            </div>
+        @endif
+    </div>
 @endsection

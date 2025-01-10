@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class BookingController extends Controller
 {
-    public function index()
+    public function show(Request $request)
     {
         // Assuming you need to pass some data to the view
         $data = []; // Replace with actual data fetching logic
 
-        return view('home', $data);
+        return view('booking', $data);
     }
 }

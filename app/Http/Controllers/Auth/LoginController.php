@@ -48,6 +48,6 @@ class LoginController extends Controller
      */
     protected function authenticated($request, $user)
     {
-        return redirect()->route('home');  // You can use this method to change the redirection logic if needed
+        return redirect()->route('home');  
     }
 }

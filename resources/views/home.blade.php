@@ -1,55 +1,87 @@
-
 @extends('layouts.app')
 
 @section('content')
 <style>
     .content {
-        background: url('/path/to/your/background-image.jpg') no-repeat center center fixed;
-        background-size: cover;
-        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 80vh;
         padding: 50px;
-        text-align: center;
+        background-color: #002b5c; 
+        color: #f5f5f5; 
     }
-    .intro {
-        font-size: 1.2em;
+    .content .text-section {
+        width: 50%;
+        text-align: left;
+    }
+    .content .text-section h1 {
+        font-size: 2.8em; 
+        font-weight: 700;
         margin-bottom: 20px;
+        color: #6f42c1; 
     }
-    .link-buttons a {
-        margin: 10px;
-        padding: 10px 20px;
-        background-color: #007bff;
+    .content .text-section p {
+        font-size: 1.3em;
+        line-height: 1.8;
+        margin-bottom: 30px;
+        color: #e0e0e0; 
+    }
+    .content .link-buttons {
+        display: flex;
+        gap: 20px;
+    }
+    .content .link-buttons a {
+        padding: 15px 30px;
+        background-color: #6f42c1; 
         color: #fff;
+        font-size: 1.1em;
         text-decoration: none;
+        font-weight: 500;
         border-radius: 5px;
+        transition: background-color 0.3s, transform 0.2s;
     }
-    .link-buttons a:hover {
-        background-color: #0056b3;
+    .content .link-buttons a:hover {
+        background-color: #5a2e8d; 
+        transform: scale(1.05); 
+    }
+    .content .image-section {
+        width: 45%;
+    }
+    .content .image-section img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
     footer {
-        margin-top: 50px;
-        font-size: 0.9em;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 15px 0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+    body {
+        margin: 0;
     }
 </style>
 
 <div class="content">
-    <header>
-        <h1>Welcome to the Ride Booking System</h1>
-    </header>
-
-    <div class="content">
-        <p class="intro">
-            The Ride Booking System is designed to make booking rides easy, efficient, and user-friendly. Whether you need a ride to work, to a party, or for any other occasion, we are here to provide you with the best experience. Our system allows you to book rides seamlessly, track your booking, and enjoy a smooth journey with our trusted drivers. Join us today and enjoy the convenience of booking your rides anytime, anywhere!
-        </p>
-        
-        <!-- Link buttons for ride and vehicle pages -->
+    <div class="text-section">
+        <h1>Welcome to QuickRide!</h1>
+        <p>QuickRide is your ultimate ride-booking solution, connecting you with reliable drivers and vehicles for a seamless travel experience. Whether you need a quick ride to work or a weekend getaway, QuickRide ensures safety, convenience, and comfort at your fingertips.</p>
         <div class="link-buttons">
-            <a href="{{ route('rides.index') }}" class="btn btn-primary">Book a Ride</a>
-            <a href="{{ route('vehicles.index') }}" class="btn btn-secondary">View Vehicles</a>
+            <a href="{{ route('rides.index') }}">Book a Ride</a>
+            <a href="{{ route('vehicles.index') }}">View Vehicles</a>
         </div>
     </div>
-
-    <footer>
-        <p>&copy; 2025 Ride Booking System. All rights reserved.</p>
-    </footer>
+    <div class="image-section">
+        <img src="{{ asset('images/background.jpg') }}" alt="Car Image">
+    </div>
 </div>
+
+<footer>
+    <p>&copy; {{ date('Y') }} QuickRide. All rights reserved.</p>
+</footer>
 @endsection
